@@ -1,65 +1,178 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useState } from "react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+
+type Row = {
+  date: string;
+  mstrClose: number;
+  btcPrice: number;
+  navPerShare: number;
+  premiumPct: number;
+};
 
 export default function Home() {
+  const [data, setData] = useState<Row[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [range, setRange] = useState<"1M" | "3M" | "ALL">("ALL");
+  useEffect(() => {
+    fetch("/api/premium")
+      .then((res) => res.json())
+      .then((json) => {
+        setData(json.data || []);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const latest = data[data.length - 1];
+  const filteredData =
+    range === "1M"
+      ? data.slice(-30)
+      : range === "3M"
+      ? data.slice(-90)
+      : data;
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main className="min-h-screen bg-white text-black p-8">
+      <div className="max-w-6xl mx-auto space-y-8">
+        <h1 className="text-3xl font-bold">
+          DAT.co Dashboard — MSTR Premium to NAV
+        </h1>
+
+        <p className="text-gray-600">
+          This dashboard shows a daily premium-to-NAV proxy for Strategy (MSTR).
+        </p>
+
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          <>
+            {latest && (
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="rounded-2xl border p-4">
+                  <div className="text-sm text-gray-500">Latest Date</div>
+                  <div className="text-xl font-semibold">{latest.date}</div>
+                </div>
+
+                <div className="rounded-2xl border p-4">
+                  <div className="text-sm text-gray-500">MSTR Price</div>
+                  <div className="text-xl font-semibold">
+                    ${latest.mstrClose}
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border p-4">
+                  <div className="text-sm text-gray-500">BTC Price</div>
+                  <div className="text-xl font-semibold">
+                    ${latest.btcPrice}
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border p-4">
+                  <div className="text-sm text-gray-500">Premium to NAV</div>
+                  <div className="text-xl font-semibold">
+                    {latest.premiumPct}%
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold">Premium to NAV Over Time</h2>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setRange("1M")}
+                  className={`px-3 py-1 rounded-lg border ${
+                    range === "1M" ? "bg-black text-white" : "bg-white text-black"
+                  }`}
+                >
+                  1M
+                </button>
+
+                <button
+                  onClick={() => setRange("3M")}
+                  className={`px-3 py-1 rounded-lg border ${
+                    range === "3M" ? "bg-black text-white" : "bg-white text-black"
+                  }`}
+                >
+                  3M
+                </button>
+
+                <button
+                  onClick={() => setRange("ALL")}
+                  className={`px-3 py-1 rounded-lg border ${
+                    range === "ALL" ? "bg-black text-white" : "bg-white text-black"
+                  }`}
+                >
+                  All
+                </button>
+              </div>
+            </div>
+            <div className="rounded-2xl border p-4">
+              <h2 className="text-xl font-semibold mb-4">
+                MSTR Price Over Time
+              </h2>
+
+              <div className="h-[420px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={filteredData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" minTickGap={40} />
+                    <YAxis />
+                    <Tooltip />
+                    <Line type="monotone" dataKey="mstrClose" dot={false} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+                        <div className="rounded-2xl border p-4">
+              <h2 className="text-xl font-semibold mb-4">
+                BTC Price Over Time
+              </h2>
+
+              <div className="h-[420px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={filteredData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" minTickGap={40} />
+                    <YAxis />
+                    <Tooltip />
+                    <Line type="monotone" dataKey="btcPrice" dot={false} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+            <div className="rounded-2xl border p-4">
+              <h2 className="text-xl font-semibold mb-2">Formula</h2>
+              <p className="text-gray-700">
+                NAV per share = (BTC Holdings × BTC Price) / Shares Outstanding
+              </p>
+              <p className="text-gray-700">
+                Premium to NAV = (MSTR Price / NAV per share - 1) × 100%
+              </p>
+            </div>
+
+            <div className="rounded-2xl border p-4">
+              <h2 className="text-xl font-semibold mb-2">Interpretation</h2>
+              <p className="text-gray-700">
+                This premium-to-NAV proxy compares MSTR's stock price with the
+                implied Bitcoin treasury value per share. A higher premium may
+                suggest that investors are willing to pay extra for Strategy's
+                Bitcoin exposure, capital structure, or future accumulation
+                strategy.
+              </p>
+            </div>
+          </>
+        )}
+      </div>
+    </main>
   );
 }
