@@ -23,6 +23,7 @@ export default function Home() {
   const [data, setData] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [range, setRange] = useState<"1M" | "3M" | "ALL">("ALL");
+
   useEffect(() => {
     fetch("/api/premium")
       .then((res) => res.json())
@@ -33,12 +34,14 @@ export default function Home() {
   }, []);
 
   const latest = data[data.length - 1];
+
   const filteredData =
     range === "1M"
       ? data.slice(-30)
       : range === "3M"
       ? data.slice(-90)
       : data;
+
   return (
     <main className="min-h-screen bg-white text-black p-8">
       <div className="max-w-6xl mx-auto space-y-8">
@@ -55,7 +58,7 @@ export default function Home() {
         ) : (
           <>
             {latest && (
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
                 <div className="rounded-2xl border p-4">
                   <div className="text-sm text-gray-500">Latest Date</div>
                   <div className="text-xl font-semibold">{latest.date}</div>
@@ -83,15 +86,18 @@ export default function Home() {
                 </div>
               </div>
             )}
+
             <div className="rounded-2xl border p-4">
-              <div className="flex items-center justify-between mb-4">
+              <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-xl font-semibold">Premium to NAV Over Time</h2>
 
                 <div className="flex gap-2">
                   <button
                     onClick={() => setRange("1M")}
-                    className={`px-3 py-1 rounded-lg border ${
-                      range === "1M" ? "bg-black text-white" : "bg-white text-black"
+                    className={`rounded-lg border px-3 py-1 ${
+                      range === "1M"
+                        ? "bg-black text-white"
+                        : "bg-white text-black"
                     }`}
                   >
                     1M
@@ -99,8 +105,10 @@ export default function Home() {
 
                   <button
                     onClick={() => setRange("3M")}
-                    className={`px-3 py-1 rounded-lg border ${
-                      range === "3M" ? "bg-black text-white" : "bg-white text-black"
+                    className={`rounded-lg border px-3 py-1 ${
+                      range === "3M"
+                        ? "bg-black text-white"
+                        : "bg-white text-black"
                     }`}
                   >
                     3M
@@ -108,8 +116,10 @@ export default function Home() {
 
                   <button
                     onClick={() => setRange("ALL")}
-                    className={`px-3 py-1 rounded-lg border ${
-                      range === "ALL" ? "bg-black text-white" : "bg-white text-black"
+                    className={`rounded-lg border px-3 py-1 ${
+                      range === "ALL"
+                        ? "bg-black text-white"
+                        : "bg-white text-black"
                     }`}
                   >
                     All
@@ -131,9 +141,7 @@ export default function Home() {
             </div>
 
             <div className="rounded-2xl border p-4">
-              <h2 className="text-xl font-semibold mb-4">
-                MSTR Price Over Time
-              </h2>
+              <h2 className="mb-4 text-xl font-semibold">MSTR Price Over Time</h2>
 
               <div className="h-[420px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -147,10 +155,9 @@ export default function Home() {
                 </ResponsiveContainer>
               </div>
             </div>
-                        <div className="rounded-2xl border p-4">
-              <h2 className="text-xl font-semibold mb-4">
-                BTC Price Over Time
-              </h2>
+
+            <div className="rounded-2xl border p-4">
+              <h2 className="mb-4 text-xl font-semibold">BTC Price Over Time</h2>
 
               <div className="h-[420px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -164,8 +171,9 @@ export default function Home() {
                 </ResponsiveContainer>
               </div>
             </div>
+
             <div className="rounded-2xl border p-4">
-              <h2 className="text-xl font-semibold mb-2">Formula</h2>
+              <h2 className="mb-2 text-xl font-semibold">Formula</h2>
               <p className="text-gray-700">
                 NAV per share = (BTC Holdings × BTC Price) / Shares Outstanding
               </p>
@@ -175,17 +183,18 @@ export default function Home() {
             </div>
 
             <div className="rounded-2xl border p-4">
-              <h2 className="text-xl font-semibold mb-2">Interpretation</h2>
+              <h2 className="mb-2 text-xl font-semibold">Interpretation</h2>
               <p className="text-gray-700">
-                This premium-to-NAV proxy compares MSTR's stock price with the
-                implied Bitcoin treasury value per share. A higher premium may
-                suggest that investors are willing to pay extra for Strategy's
-                Bitcoin exposure, capital structure, or future accumulation
-                strategy.
+                This premium-to-NAV proxy compares MSTR&apos;s stock price with
+                the implied Bitcoin treasury value per share. A higher premium
+                may suggest that investors are willing to pay extra for
+                Strategy&apos;s Bitcoin exposure, capital structure, or future
+                accumulation strategy.
               </p>
             </div>
-                        <div className="rounded-2xl border p-4">
-              <h2 className="text-xl font-semibold mb-2">
+
+            <div className="rounded-2xl border p-4">
+              <h2 className="mb-2 text-xl font-semibold">
                 Data Source & Disclaimer
               </h2>
               <p className="text-gray-700">
