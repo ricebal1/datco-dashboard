@@ -83,39 +83,53 @@ export default function Home() {
                 </div>
               </div>
             )}
+            <div className="rounded-2xl border p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold">Premium to NAV Over Time</h2>
 
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold">Premium to NAV Over Time</h2>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setRange("1M")}
+                    className={`px-3 py-1 rounded-lg border ${
+                      range === "1M" ? "bg-black text-white" : "bg-white text-black"
+                    }`}
+                  >
+                    1M
+                  </button>
 
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setRange("1M")}
-                  className={`px-3 py-1 rounded-lg border ${
-                    range === "1M" ? "bg-black text-white" : "bg-white text-black"
-                  }`}
-                >
-                  1M
-                </button>
+                  <button
+                    onClick={() => setRange("3M")}
+                    className={`px-3 py-1 rounded-lg border ${
+                      range === "3M" ? "bg-black text-white" : "bg-white text-black"
+                    }`}
+                  >
+                    3M
+                  </button>
 
-                <button
-                  onClick={() => setRange("3M")}
-                  className={`px-3 py-1 rounded-lg border ${
-                    range === "3M" ? "bg-black text-white" : "bg-white text-black"
-                  }`}
-                >
-                  3M
-                </button>
+                  <button
+                    onClick={() => setRange("ALL")}
+                    className={`px-3 py-1 rounded-lg border ${
+                      range === "ALL" ? "bg-black text-white" : "bg-white text-black"
+                    }`}
+                  >
+                    All
+                  </button>
+                </div>
+              </div>
 
-                <button
-                  onClick={() => setRange("ALL")}
-                  className={`px-3 py-1 rounded-lg border ${
-                    range === "ALL" ? "bg-black text-white" : "bg-white text-black"
-                  }`}
-                >
-                  All
-                </button>
+              <div className="h-[420px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={filteredData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" minTickGap={40} />
+                    <YAxis />
+                    <Tooltip />
+                    <Line type="monotone" dataKey="premiumPct" dot={false} />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
             </div>
+
             <div className="rounded-2xl border p-4">
               <h2 className="text-xl font-semibold mb-4">
                 MSTR Price Over Time
