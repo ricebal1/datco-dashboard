@@ -170,6 +170,18 @@ export default function Home() {
                 strategy.
               </p>
             </div>
+                        <div className="rounded-2xl border p-4">
+              <h2 className="text-xl font-semibold mb-2">
+                Data Source & Disclaimer
+              </h2>
+              <p className="text-gray-700">
+                MSTR price data is fetched from Alpha Vantage, and BTC price
+                data is fetched from CoinGecko. This dashboard uses a simplified
+                premium-to-NAV proxy based on fixed BTC holdings and shares
+                outstanding assumptions, so it should be interpreted as an
+                analytical approximation rather than an official accounting NAV.
+              </p>
+            </div>
           </>
         )}
       </div>
